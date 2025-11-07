@@ -1,9 +1,13 @@
-import Image from "next/image";
+import { requireAuth } from "@/lib/auth-utils";
 
-export default function Home() {
+const Page = async () => {
+
+  await requireAuth();
   return (
     <div className="">
-      <h1>Hello World</h1>
+     Hi
     </div>
   );
-}
+};
+
+export default Page;
