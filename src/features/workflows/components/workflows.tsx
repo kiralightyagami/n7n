@@ -1,31 +1,38 @@
 "use client";
 import { EntityContainer, EntityHeader } from "@/components/entity-views";
-import { useSuspenseWorkflows } from "../hooks/use-workflows";
+import { useCreateWorkflows, useSuspenseWorkflows } from "../hooks/use-workflows";
+import { toast } from "sonner";
 
 export const WorkflowsList = () => {
     const { data: workflows } = useSuspenseWorkflows();
 
     return (
-        <div className="flex flex-col gap-4">
-            {workflows.map((workflow) => (
-                <div key={workflow.id}>{workflow.name}</div>
-            ))}
+        <div className="flex-1 flex justify-center items-center">
+            {JSON.stringify(workflows, null, 2)}
         </div>
     );
 }
 
 
 export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
+    const  createWorkflow  = useCreateWorkflows();
 
+    const handleNewWorkflow = () => {
+        createWorkflow.mutate(undefined, {
+            onError: (error) => {
+                console.error(error);
+            },    
+        });
+    }
     return (
         <>
         <EntityHeader
         title="Workflows"
         description="Manage your workflows"
-        onNew={() => {}}
+        onNew={handleNewWorkflow}
         newButtonLabel="New Workflow"
         disabled={disabled}
-        isCreating={false}
+        isCreating={createWorkflow.isPending}
         />
         </>
     );
