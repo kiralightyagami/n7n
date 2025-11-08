@@ -2,6 +2,7 @@
 import { EntityContainer, EntityHeader } from "@/components/entity-views";
 import { useCreateWorkflows, useSuspenseWorkflows } from "../hooks/use-workflows";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const WorkflowsList = () => {
     const { data: workflows } = useSuspenseWorkflows();
@@ -16,11 +17,14 @@ export const WorkflowsList = () => {
 
 export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
     const  createWorkflow  = useCreateWorkflows();
-
+    const router = useRouter();
     const handleNewWorkflow = () => {
         createWorkflow.mutate(undefined, {
+            onSuccess: (data) => {
+                router.push(`/workflows/${data.id}`);
+            },
             onError: (error) => {
-                console.error(error);
+                toast.error(`Failed to create workflow: ${error.message}`);
             },    
         });
     }
