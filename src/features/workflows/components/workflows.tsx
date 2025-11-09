@@ -1,5 +1,5 @@
 "use client";
-import { EntityContainer, EntityHeader, EntityPagination, EntitySearch } from "@/components/entity-views";
+import { EmptyView, EntityContainer, EntityHeader, EntityPagination, EntitySearch, ErrorView, LoadingView } from "@/components/entity-views";
 import { useCreateWorkflows, useSuspenseWorkflows } from "../hooks/use-workflows";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -24,6 +24,10 @@ const { searchValue, onSearchChange } = useEntitySearch({ params, setParams });
 
 export const WorkflowsList = () => {
     const { data: workflows } = useSuspenseWorkflows();
+
+    if (workflows.items.length === 0) {
+        return <WorkflowsEmpty />;
+    }
 
     return (
         <div className="flex-1 flex justify-center items-center">
@@ -87,4 +91,33 @@ export const WorkflowsContainer = ({ children }: { children: React.ReactNode }) 
             {children}
         </EntityContainer>
     )
+};
+
+
+export const WorkflowsLoading = () => {
+     return <LoadingView message="Loading workflows..."/>
 }
+
+export const WorkflowsError = () => {
+    return <ErrorView message="Error loading workflows"/>
+}
+
+export const WorkflowsEmpty = () => {
+    const createWorkflow = useCreateWorkflows();
+    
+    const handleCreate = () => {
+        createWorkflow.mutate(undefined, {
+            onError: (error) => {
+                toast.error(`Failed to create workflow: ${error.message}`);
+            },
+        })
+    }
+    
+    return (
+        <>
+          <EmptyView 
+          onNew={handleCreate}
+          message="you haven't created any workflows yet. Get started by creating a new workflow."/>
+        </>
+    );
+};
