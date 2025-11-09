@@ -1,10 +1,13 @@
 "use client";
-import { EmptyView, EntityContainer, EntityHeader, EntityPagination, EntitySearch, ErrorView, LoadingView } from "@/components/entity-views";
-import { useCreateWorkflows, useSuspenseWorkflows } from "../hooks/use-workflows";
+import { EmptyView, EntityContainer, EntityHeader, EntityItem, EntityList, EntityPagination, EntitySearch, ErrorView, LoadingView } from "@/components/entity-views";
+import { useCreateWorkflows, useRemoveWorkflow, useSuspenseWorkflows } from "../hooks/use-workflows";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useWorkflowsParams } from "../hooks/use-workflows-params";
 import { useEntitySearch } from "@/hooks/use-entity-search";
+import type { WorkflowModel as Workflow } from "@/generated/prisma/models";   
+import { WorkflowIcon } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 
 
 export const WorkflowsSearch = () => {
@@ -23,17 +26,18 @@ const { searchValue, onSearchChange } = useEntitySearch({ params, setParams });
 
 
 export const WorkflowsList = () => {
-    const { data: workflows } = useSuspenseWorkflows();
+    const workflows  = useSuspenseWorkflows();
 
-    if (workflows.items.length === 0) {
-        return <WorkflowsEmpty />;
-    }
-
-    return (
-        <div className="flex-1 flex justify-center items-center">
-            {JSON.stringify(workflows, null, 2)}
-        </div>
-    );
+    return(
+        <EntityList
+        items={workflows.data.items}
+        renderItem={(workflow) => (
+            <WorkflowsItem data={workflow} />
+        )}
+        getKey={(workflow) => workflow.id}
+        emptyView={<WorkflowsEmpty />}
+        />
+    )
 }
 
 
@@ -104,11 +108,14 @@ export const WorkflowsError = () => {
 
 export const WorkflowsEmpty = () => {
     const createWorkflow = useCreateWorkflows();
-    
+    const router = useRouter();
     const handleCreate = () => {
         createWorkflow.mutate(undefined, {
             onError: (error) => {
                 toast.error(`Failed to create workflow: ${error.message}`);
+            },
+            onSuccess: (data) => {
+                router.push(`/workflows/${data.id}`);
             },
         })
     }
@@ -121,3 +128,38 @@ export const WorkflowsEmpty = () => {
         </>
     );
 };
+
+
+export const WorkflowsItem = ({
+    data,
+}: {
+    data:Workflow
+}) => {
+
+  const removeWorkflow = useRemoveWorkflow();
+
+
+  const handleRemove = () => {
+    removeWorkflow.mutate({ id: data.id });
+  };
+
+  return (
+    <EntityItem
+    href={`/workflows/${data.id}`}
+    title={data.name}
+    subtitle={
+    <>
+      Updated {formatDistanceToNow(data.updatedAt, { addSuffix: true })}{" "}
+      &bull; Created
+      {formatDistanceToNow(data.createdAt, { addSuffix: true })}
+    </>}
+    image={
+        <div className="size-8 flex items-center justify-center">
+            <WorkflowIcon className="size-5 text-muted-foreground" />
+        </div>
+    }
+    onRemove={handleRemove}
+    isRemoving={removeWorkflow.isPending}
+    />
+  )
+}
