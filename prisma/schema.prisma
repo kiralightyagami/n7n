@@ -76,7 +76,7 @@ model Verification {
 }
 
 model Workflow {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -89,7 +89,7 @@ model Workflow {
 
 
 model Node {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   workflowId String
   workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
@@ -107,7 +107,7 @@ model Node {
 }
 
 model Connection {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   workflowId String
   workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
