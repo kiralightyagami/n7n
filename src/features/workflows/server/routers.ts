@@ -1,6 +1,8 @@
 import { PAGINATION } from "@/config/constant";
+import { NodeType } from "@/generated/prisma/client";
 import prisma from "@/lib/db";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { Edge, Node } from "@xyflow/react";
 import { z } from "zod";
 
 
@@ -11,6 +13,13 @@ export const workflowsRouter = createTRPCRouter({
             name: "New Workflow",
             userId: ctx.auth.user.id,
             createdAt: new Date(),
+            nodes: {
+                create: {
+                    name: NodeType.INITIAL,
+                    type: NodeType.INITIAL,
+                    position: { x: 0, y: 0 },
+                },
+            },
         },
        });
     }),
@@ -48,12 +57,35 @@ export const workflowsRouter = createTRPCRouter({
             id: z.string(),
         }))
         .query(async ({ ctx, input}) => {
-            return prisma.workflow.findUniqueOrThrow({
+            const workflow = await prisma.workflow.findUniqueOrThrow({
                 where: {
                     id: input.id,
                     userId: ctx.auth.user.id,
                 },
+                include: {
+                    nodes: true,
+                    connections: true,
+                },
             });
+        const nodes: Node[] = workflow.nodes.map((node) => ({
+            id: node.id,
+            position: node.position as { x: number, y: number },
+            data: (node.data as Record<string, unknown>) || {},
+            type: node.type,
+        }));
+        const edges: Edge[] = workflow.connections.map((connection) => ({
+            id: connection.id,
+            source: connection.fromNodeId,
+            target: connection.toNodeId,
+            sourceHandle: connection.fromOutput,
+            targetHandle: connection.toInput,
+        }));
+        return { 
+            id: workflow.id,
+            name: workflow.name,
+            nodes,
+            edges,
+         };
         }),
     getAll: protectedProcedure
         .input(z.object({
