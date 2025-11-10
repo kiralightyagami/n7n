@@ -126,6 +126,10 @@ model Connection {
 
 }
 
+
+
 enum NodeType {
   INITIAL
+  MANUAL_TRIGGER
+  HTTP_REQUEST
 }
