@@ -2,6 +2,7 @@ import type { NodeExecutor } from "@/features/executions/types";
 import { NonRetriableError } from "inngest";
 import ky, { type Options as KyOptions} from "ky";
 import Handlebars from "handlebars";
+import { httpRequestChannel } from "@/ingest/channels/http-request";
 
 
 Handlebars.registerHelper("json", (context) => {
@@ -20,21 +21,41 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
     data, 
     nodeId, 
     context, 
-    step 
+    step,
+    publish,
+
 }) => {
     
+  await publish(httpRequestChannel().status({
+    nodeId,
+    status: "loading",
+  }));
+
   if (!data.endpoint) {
+    await publish(httpRequestChannel().status({
+      nodeId,
+      status: "error",
+    }));
     throw new NonRetriableError("Endpoint is required");
   }
 
   if (!data.variableName) {
+    await publish(httpRequestChannel().status({
+      nodeId,
+      status: "error",
+    }));
     throw new NonRetriableError("Variable name is required");
   }
 
   if (!data.method) {
+    await publish(httpRequestChannel().status({
+      nodeId,
+      status: "error",
+    }));
     throw new NonRetriableError("Method is required");
   }
 
+  try {
   const result = await step.run("http-request", async () => {
     const endpoint = Handlebars.compile(data.endpoint)(context);
     const method = data.method;
@@ -72,5 +93,17 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
       };
 
    });
+
+   await publish(httpRequestChannel().status({
+    nodeId,
+    status: "success",
+  }));
    return result;
+   } catch (error) {
+    await publish(httpRequestChannel().status({
+      nodeId,
+      status: "error",
+    }));
+    throw error;
+   }
 };
