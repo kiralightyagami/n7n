@@ -34,6 +34,12 @@ const triggerNodes: NodeTypeOption[] = [
         label: "Trigger manually",
         description: "Trigger the workflow manually.",
     },
+    {
+        type: NodeType.GOOGLE_FORM_TRIGGER,
+        icon: "/icons/google-form.svg",
+        label: "Google Form",
+        description: "Runs a flow when google form is submitted.",
+    },
 ];
 
 
