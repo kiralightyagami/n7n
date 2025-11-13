@@ -9,12 +9,13 @@ import { manualTriggerChannel } from "./channels/manual-trigger";
 import { googleFormTriggerChannel } from "./channels/google-form-trigger";
 import { stripeTriggerChannel } from "./channels/stripe-trigger";
 import { geminiChannel } from "./channels/gemini";
+import { openaiChannel } from "./channels/openai";
 
 export const executeWorkflow = inngest.createFunction(
   { id: "execute-workflow", 
     retries: 0 //remove in prod 
   },
-  { event: "workflow/execute.workflow", channels: [httpRequestChannel(), manualTriggerChannel(), googleFormTriggerChannel(), stripeTriggerChannel(), geminiChannel()] },
+  { event: "workflow/execute.workflow", channels: [httpRequestChannel(), manualTriggerChannel(), googleFormTriggerChannel(), stripeTriggerChannel(), geminiChannel(), openaiChannel()] },
   async ({ event, step, publish }) => {
     const workflowId = event.data.workflowId;
 

@@ -63,6 +63,12 @@ const executionNodes: NodeTypeOption[] = [
         label: "Gemini",
         description: "Uses Gemini to generate text",
     },
+    {
+        type: NodeType.OPENAI,
+        icon: "/icons/openai.svg",
+        label: "OpenAI",
+        description: "Uses OpenAI to generate text",
+    },
 ];
 
 

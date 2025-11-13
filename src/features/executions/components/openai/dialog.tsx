@@ -31,34 +31,32 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-export const GEMINI_AVAILABLE_MODELS = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-8b",
-    "gemini-1.5-pro",
-    "gemini-1.0-pro",
-    "gemini-pro",
+export const OPENAI_AVAILABLE_MODELS = [
+    "gpt-3.5-turbo",
+    "gpt-o3-mini",
+    "gpt-4o-mini",
+    "gpt-4o",
+    "gpt-4",
 ] as const;
 
 
 const formSchema = z.object({
     variableName: z.string().min(1, {message: "Variable name is required"}).regex(/^[A-Za-z_$][A-Za-z0-9_$]*$/, {message: "Variable name must start with a letter or underscore and contain only letters, numbers, and underscores"}),
-    model: z.enum(GEMINI_AVAILABLE_MODELS),
+    model: z.enum(OPENAI_AVAILABLE_MODELS),
     systemPrompt: z.string().optional(),
     userPrompt: z.string().min(1, {message: "User prompt is required"}),
 });
 
-export type GeminiFormValues = z.infer<typeof formSchema>;
+export type OpenAIFormValues = z.infer<typeof formSchema>;
 
 interface Props {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onSubmit: (values: z.infer<typeof formSchema>) => void;
-    defaultValues?: Partial<GeminiFormValues>;
+    defaultValues?: Partial<OpenAIFormValues>;
 };
 
-export const GeminiDialog = ({ 
+export const OpenAIDialog = ({ 
     open, 
     onOpenChange,
     onSubmit,
@@ -68,7 +66,7 @@ export const GeminiDialog = ({
         resolver: zodResolver(formSchema),
         defaultValues: {
             variableName: defaultValues.variableName || "",
-            model: defaultValues.model || GEMINI_AVAILABLE_MODELS[0],
+            model: defaultValues.model || OPENAI_AVAILABLE_MODELS[0],
             systemPrompt: defaultValues.systemPrompt || "",
             userPrompt: defaultValues.userPrompt || "",
         }
@@ -78,7 +76,7 @@ export const GeminiDialog = ({
         if (open) {
             form.reset({
                 variableName: defaultValues.variableName || "",
-                model: defaultValues.model || GEMINI_AVAILABLE_MODELS[0],
+                model: defaultValues.model || OPENAI_AVAILABLE_MODELS[0],
                 systemPrompt: defaultValues.systemPrompt || "",
                 userPrompt: defaultValues.userPrompt || "",
             });
@@ -98,7 +96,7 @@ export const GeminiDialog = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Gemini</DialogTitle>
+                    <DialogTitle>OpenAI</DialogTitle>
                     <DialogDescription>
                         Configure the Ai model and prompts for this node.
                     </DialogDescription>
@@ -116,7 +114,7 @@ export const GeminiDialog = ({
                                     <FormLabel>Variable Name</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="myGeminiCall"
+                                            placeholder="myOpenAICall"
                                             {...field}
                                         />
                                     </FormControl>
@@ -145,7 +143,7 @@ export const GeminiDialog = ({
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {GEMINI_AVAILABLE_MODELS.map((model) => (
+                                            {OPENAI_AVAILABLE_MODELS.map((model) => (
                                                 <SelectItem key={model} value={model}>
                                                     {model}
                                                 </SelectItem>
@@ -153,10 +151,7 @@ export const GeminiDialog = ({
                                         </SelectContent>
                                     </Select>
                                     <FormDescription>
-                                        The Google Gemini model to use for this node.
-                                        <span className="font-semibold text-amber-700 dark:text-amber-400">
-                                            Use <code>gemini-2.5-flash</code> or <code>gemini-2.0-flash</code> if you are using the free tier.
-                                        </span>
+                                        The OpenAI model to use for this node.
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
