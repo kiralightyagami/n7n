@@ -69,6 +69,12 @@ const executionNodes: NodeTypeOption[] = [
         label: "OpenAI",
         description: "Uses OpenAI to generate text",
     },
+    {
+        type: NodeType.ANTHROPIC,
+        icon: "/icons/anthropic.svg",
+        label: "Anthropic",
+        description: "Uses Anthropic to generate text",
+    },
 ];
 
 

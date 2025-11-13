@@ -1,0 +1,104 @@
+import type { NodeExecutor } from "@/features/executions/types";
+import { NonRetriableError } from "inngest";
+import Handlebars from "handlebars";
+import { ANTHROPIC_AVAILABLE_MODELS } from "./dialog";
+import { generateText } from "ai";
+import { anthropicChannel } from "@/ingest/channels/anthropic";
+import { createAnthropic } from "@ai-sdk/anthropic";
+
+Handlebars.registerHelper("json", (context) => {
+  const stringified = JSON.stringify(context, null, 2);
+  return new Handlebars.SafeString(stringified);
+});
+
+type AnthropicData = {
+  variableName?: string;
+  model?: typeof ANTHROPIC_AVAILABLE_MODELS[number];
+  systemPrompt?: string;
+  userPrompt?: string;
+};
+
+export const anthropicExecutor: NodeExecutor<AnthropicData> = async ({ 
+    data, 
+    nodeId, 
+    context, 
+    step,
+    publish,
+
+}) => {
+    
+  await publish(anthropicChannel().status({
+    nodeId,
+    status: "loading",
+  }));
+
+  if (!data.variableName) {
+    await publish(anthropicChannel().status({
+      nodeId,
+      status: "error",
+    }));
+    throw new NonRetriableError("Variable name is required");
+  }
+
+  if (!data.userPrompt) {
+    await publish(anthropicChannel().status({
+      nodeId,
+      status: "error",
+    }));
+    throw new NonRetriableError("User prompt is required");
+  }
+
+  const systemPrompt = data.systemPrompt
+  ? Handlebars.compile(data.systemPrompt)(context)
+  : "You are a helpful assistant that can answer questions and help with tasks.";
+  
+  const userPrompt = Handlebars.compile(data.userPrompt)(context);
+
+  const anthropicApiKey = process.env.ANTHROPIC_API_KEY!;
+
+  const anthropic = createAnthropic({
+    apiKey: anthropicApiKey,
+  });
+  try {
+    const { steps } = await step.ai.wrap(
+      "anthropic-generate-text",
+      generateText,
+      {
+        model: anthropic(data.model || "claude-3-5-sonnet-20240620"),
+        system: systemPrompt,
+        prompt: userPrompt,
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
+
+      },
+    );
+
+    const text = 
+    steps[0].content[0].type === "text"
+    ? steps[0].content[0].text 
+    : "";
+
+    await publish(anthropicChannel().status({
+      nodeId,
+      status: "success",
+    }));
+
+    return {
+      ...context,
+      [data.variableName]: {
+        aiResponse: text,
+      },
+    }
+
+    
+  } catch (error) {
+    await publish(anthropicChannel().status({
+      nodeId,
+      status: "error",
+    }));
+    throw error;
+  }
+};
