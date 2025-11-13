@@ -46,6 +46,7 @@ const triggerNodes: NodeTypeOption[] = [
         label: "Stripe",
         description: "Runs a flow when a new payment is made.",
     },
+
 ];
 
 
@@ -55,6 +56,12 @@ const executionNodes: NodeTypeOption[] = [
         icon: GlobeIcon,
         label: "HTTP Request",
         description: "Make an HTTP request to an external API.",
+    },
+    {
+        type: NodeType.GEMINI,
+        icon: "/icons/gemini.svg",
+        label: "Gemini",
+        description: "Uses Gemini to generate text",
     },
 ];
 

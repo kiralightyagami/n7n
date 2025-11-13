@@ -5,6 +5,7 @@ import { NodeType } from "@/generated/prisma/enums";
 import type { NodeTypes } from "@xyflow/react";
 import { GoogleFormTrigger } from "@/features/triggers/components/google-form-trigger/node";
 import { StripeTriggerNode } from "@/features/triggers/components/stripe-trigger/node";
+import { GeminiNode } from "@/features/executions/components/gemini/node";
 
 export const nodeComponents = {
     [NodeType.INITIAL]: InitialNode,
@@ -12,6 +13,7 @@ export const nodeComponents = {
     [NodeType.HTTP_REQUEST]: HttpRequestNode,
     [NodeType.GOOGLE_FORM_TRIGGER]: GoogleFormTrigger,
     [NodeType.STRIPE_TRIGGER]: StripeTriggerNode,
+    [NodeType.GEMINI]: GeminiNode,
 } as const satisfies NodeTypes;
 
 
