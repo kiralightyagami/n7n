@@ -13,7 +13,7 @@ export const useSuspenseCredentials = () => {
 
 
 
-export const useCreateCredentials = () => {
+export const useCreateCredential = () => {
     const trpc = useTRPC();
     const queryClient = useQueryClient();
 
