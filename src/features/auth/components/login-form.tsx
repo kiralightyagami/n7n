@@ -44,6 +44,34 @@ export function LoginForm() {
             password: "",
         },
     });
+    
+    const signInWithGoogle = async () => {
+        await authClient.signIn.social({
+            provider: "google",
+        },
+    {
+        onSuccess: () => {
+            router.push("/");
+        },
+        onError: () => {
+            toast.error("Failed to sign in with Google");
+        },
+     });
+    };
+
+    const signInWithGithub = async () => {
+        await authClient.signIn.social({
+            provider: "github",
+        },
+    {
+        onSuccess: () => {
+            router.push("/");
+        },
+        onError: () => {
+            toast.error("Failed to sign in with Github");
+        },
+     });
+    };
 
     const onSubmit = async (data: LoginFormValues) => {
         await authClient.signIn.email({
@@ -52,7 +80,6 @@ export function LoginForm() {
             callbackURL: "/",
         },{
             onSuccess: () => {
-                toast.success("Logged in successfully");
                 router.push("/");
             },
             onError: (error) => {
@@ -84,6 +111,7 @@ export function LoginForm() {
                                       className="w-full"
                                       type="button"
                                       disabled={isPending}
+                                      onClick={signInWithGithub}
                                     >
                                         <Image src="/icons/github.svg" alt="Github" width={20} height={20} />
                                         Continue with Github
@@ -93,6 +121,7 @@ export function LoginForm() {
                                       className="w-full"
                                       type="button"
                                       disabled={isPending}
+                                      onClick={signInWithGoogle}
                                     >
                                         <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
                                         Continue with Google
