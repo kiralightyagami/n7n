@@ -2,14 +2,14 @@
 
 import { getSubscriptionToken, type Realtime } from "@inngest/realtime";
 import { inngest } from "@/ingest/client";
-import { geminiChannel } from "@/ingest/channels/gemini";
+import { discordChannel } from "@/ingest/channels/discord";
 
-export type GeminiToken = Realtime.Token<typeof geminiChannel, ["status"]>;
+export type DiscordToken = Realtime.Token<typeof discordChannel, ["status"]>;
 
-export async function fetchGeminiRealtimeToken():
-Promise<GeminiToken> {
+export async function fetchDiscordRealtimeToken():
+Promise<DiscordToken> {
     const token = await getSubscriptionToken(inngest, {
-        channel: geminiChannel(),
+        channel: discordChannel(),
         topics: ["status"],
     });
 
