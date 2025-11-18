@@ -4,15 +4,15 @@ An AI-powered workflow automation platform built with Next.js, enabling users to
 
 ## Features
 
-- 🎨 **Visual Workflow Editor** - Drag-and-drop interface powered by React Flow
-- 🤖 **AI Integration** - Support for OpenAI, Anthropic (Claude), and Google Gemini
-- 🔌 **Multiple Integrations**:
+-  **Visual Workflow Editor** - Drag-and-drop interface powered by React Flow
+- **AI Integration** - Support for OpenAI, Anthropic (Claude), and Google Gemini
+-  **Multiple Integrations**:
   - **Triggers**: Manual, Google Forms, Stripe webhooks
   - **Actions**: HTTP Request, Discord, Slack
-- 🔐 **Secure Credential Management** - Encrypted storage for API keys and credentials
-- 📊 **Execution Tracking** - Monitor workflow executions with real-time status updates
-- 🚀 **Background Processing** - Powered by Inngest for reliable workflow execution
-- 👤 **User Authentication** - Secure authentication with Better Auth
+-  **Secure Credential Management** - Encrypted storage for API keys and credentials
+- **Execution Tracking** - Monitor workflow executions with real-time status updates
+- **Background Processing** - Powered by Inngest for reliable workflow execution
+- **User Authentication** - Secure authentication with Better Auth
 
 ## Tech Stack
 
@@ -55,24 +55,8 @@ bun install
 
 ### 3. Set up environment variables
 
-Create a `.env` file in the root directory with the following variables:
-
-```env
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/n7n"
-
-# Authentication (Better Auth)
-BETTER_AUTH_SECRET="your-secret-key-here"
-BETTER_AUTH_URL="http://localhost:3000"
-
-# Inngest (for background jobs)
-INNGEST_EVENT_KEY="your-inngest-event-key"
-INNGEST_SIGNING_KEY="your-inngest-signing-key"
-
-# Optional: AI Provider API Keys (if using AI nodes)
-OPENAI_API_KEY="your-openai-key"
-ANTHROPIC_API_KEY="your-anthropic-key"
-GOOGLE_API_KEY="your-google-key"
+```bash
+cp .env.example .env
 ```
 
 ### 4. Set up the database
