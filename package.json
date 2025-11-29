@@ -9,7 +9,7 @@
     "lint": "biome check",
     "format": "biome format --write",
     "inngest:dev": "inngest-cli dev",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate && @better-auth/cli generate"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.42",
