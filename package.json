@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "prisma generate && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
     "inngest:dev": "inngest-cli dev",
-    "postinstall": "prisma generate"
+    "postinstall": "node ./scripts/copy-prisma-engines.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.42",
