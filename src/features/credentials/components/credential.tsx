@@ -1,6 +1,6 @@
 "use client";
 
-import { CredentialType } from "@/generated/prisma/enums";
+import { CredentialType } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useCreateCredential, useSuspenseCredential, useUpdateCredential } from "../hooks/use-credentials";
 import { useForm } from "react-hook-form";
