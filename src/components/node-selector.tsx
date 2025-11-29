@@ -16,7 +16,7 @@ import {
     SheetDescription,
     SheetTrigger,
 } from "@/components/ui/sheet";
-import { NodeType } from "@/generated/prisma/enums";
+import { NodeType } from "@prisma/client";
 import { Separator } from "@/components/ui/separator";
 
 export type NodeTypeOption = {

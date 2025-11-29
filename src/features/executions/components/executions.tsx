@@ -4,7 +4,7 @@ import { useSuspenseExecutions } from "../hooks/use-executions";
 import { useExecutionsParams } from "../hooks/use-executions-params";
 import { formatDistanceToNow } from "date-fns";
 import { ExecutionStatus } from "@prisma/client";
-import { Execution } from "@/generated/prisma/client";
+import { Execution } from "@prisma/client";
 import { CheckCircle2Icon, ClockIcon, Loader2Icon, XCircleIcon } from "lucide-react";
 
 
